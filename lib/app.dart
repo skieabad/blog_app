@@ -1,5 +1,5 @@
 import 'package:blog_app/core/theme/theme.dart';
-import 'package:blog_app/features/auth/presentation/pages/signin_page.dart';
+import 'package:blog_app/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:flutter/material.dart';
 
 class MyMaterialApp extends StatelessWidget {
