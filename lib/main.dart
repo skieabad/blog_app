@@ -1,21 +1,18 @@
 import 'package:blog_app/app.dart';
+import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:blog_app/init_dependencies.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Load .env file
-  await dotenv.load(fileName: ".env");
-
-  // Initialize Supabase
-  var supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
-  var supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'] ?? '';
-
-  await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
+  await initDependencies();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(create: (_) => serviceLocator<AuthBloc>()),
+      ],
+      child: const MyMaterialApp(),
+    ),
   );
-  runApp(const MyMaterialApp());
 }
