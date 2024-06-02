@@ -58,7 +58,10 @@ class _SignInPageState extends State<SignInPage> {
                   obscureText: true,
                 ),
                 const SizedBox(height: 24.0),
-                const AuthGradientButtonWidget(buttonText: 'Sign in'),
+                AuthGradientButtonWidget(
+                  buttonText: 'Sign in',
+                  onPressed: () {},
+                ),
                 const SizedBox(height: 12.0),
                 AuthStatusWidget(
                   statusContent: 'Don\'t have an account?',
