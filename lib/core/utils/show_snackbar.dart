@@ -10,10 +10,6 @@ void showSnackbar(
     return;
   }
 
-  if (!context.mounted) {
-    return;
-  }
-
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
