@@ -14,6 +14,9 @@ void showSnackbar(
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
+        duration: const Duration(
+          milliseconds: 1500,
+        ),
         backgroundColor: backgroundColor,
         content: Text(
           content,
