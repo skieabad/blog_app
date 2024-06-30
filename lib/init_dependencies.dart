@@ -1,6 +1,7 @@
 import 'package:blog_app/features/auth/data/datasources/auth_supabase_data_source.dart';
 import 'package:blog_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:blog_app/features/auth/domain/use_cases/user_sign_in_case.dart';
 import 'package:blog_app/features/auth/domain/use_cases/user_sign_up_case.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -29,22 +30,33 @@ Future<void> initDependencies() async {
 
 // Register the classes that have constructor with required an instance
 void _initAuth() {
-  serviceLocator.registerFactory<AuthSupabaseDataSource>(
-    () => AuthSupabaseDataSourceImpl(serviceLocator()),
-  );
+  serviceLocator
+    // Datasource
+    ..registerFactory<AuthSupabaseDataSource>(
+      () => AuthSupabaseDataSourceImpl(serviceLocator()),
+    )
 
-  serviceLocator.registerFactory<AuthRepository>(
-    () => AuthRepositoryImpl(serviceLocator()),
-  );
+    // Repository
+    ..registerFactory<AuthRepository>(
+      () => AuthRepositoryImpl(serviceLocator()),
+    )
 
-  serviceLocator.registerFactory(
-    () => UserSignUpCase(serviceLocator()),
-  );
+    // Use-cases
+    ..registerFactory(
+      () => UserSignUpCase(serviceLocator()),
+    )
+    ..registerFactory(
+      () => UserSignInCase(serviceLocator()),
+    )
 
-  // We use registerLazySingleton here since we only need one instance of the AuthBloc
-  // Otherwise, our app will create a new instance of AuthBloc every time we call it
-  // And that's a big problem since we need to keep the state of the AuthBloc
-  serviceLocator.registerLazySingleton(
-    () => AuthBloc(userSignUpCase: serviceLocator()),
-  );
+    // Bloc
+    // We use registerLazySingleton here since we only need one instance of the AuthBloc
+    // Otherwise, our app will create a new instance of AuthBloc every time we call it
+    // And that's a big problem since we need to keep the state of the AuthBloc
+    ..registerLazySingleton(
+      () => AuthBloc(
+        userSignUpCase: serviceLocator(),
+        userSignInCase: serviceLocator(),
+      ),
+    );
 }
