@@ -9,7 +9,6 @@ final class AuthInitial extends AuthState {}
 
 // There 3 states for auth
 // Loading, Success, Failed
-
 final class AuthLoadingState extends AuthState {}
 
 final class AuthSuccessState extends AuthState {
