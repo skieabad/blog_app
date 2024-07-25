@@ -4,11 +4,13 @@ class AuthFieldWidget extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final FocusNode focusNode;
 
   const AuthFieldWidget({
     super.key,
     required this.controller,
     required this.hintText,
+    required this.focusNode,
     this.obscureText = false,
   });
 
@@ -20,6 +22,7 @@ class AuthFieldWidget extends StatelessWidget {
         hintText: hintText,
       ),
       obscureText: obscureText,
+      focusNode: focusNode,
     );
   }
 }
