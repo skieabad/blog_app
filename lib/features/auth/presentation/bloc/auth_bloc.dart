@@ -17,31 +17,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   })  : _userSignUpCase = userSignUpCase,
         _userSignInCase = userSignInCase,
         super(AuthInitial()) {
-    on<AuthSignUpEvent>((event, emit) async {
-      emit(AuthLoadingState());
-      final result = await _userSignUpCase(UserSignUpCaseParams(
-        event.name,
-        event.email,
-        event.password,
-      ));
+    on<AuthSignUpEvent>(_onAuthSignUpAsync);
+    on<AuthSignInEvent>(_onAuthSignInAsync);
+  }
 
-      result.fold(
-        (left) => emit(AuthFailedState(left.message)),
-        (user) => emit(AuthSuccessState(user)),
-      );
-    });
+  // Auth Sign Up
+  void _onAuthSignUpAsync(
+    AuthSignUpEvent authSignUpEvent,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+    final result = await _userSignUpCase(UserSignUpCaseParams(
+      authSignUpEvent.name,
+      authSignUpEvent.email,
+      authSignUpEvent.password,
+    ));
 
-    on<AuthSignInEvent>((event, emit) async {
-      emit(AuthLoadingState());
-      final result = await _userSignInCase(UserSignInCaseParams(
-        event.email,
-        event.password,
-      ));
+    result.fold(
+      (left) => emit(AuthFailedState(left.message)),
+      (user) => emit(AuthSuccessState(user)),
+    );
+  }
 
-      result.fold(
-        (left) => emit(AuthFailedState(left.message)),
-        (user) => emit(AuthSuccessState(user)),
-      );
-    });
+  // Auth Sign In
+  void _onAuthSignInAsync(
+    AuthSignInEvent authSignInEvent,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+    final result = await _userSignInCase(UserSignInCaseParams(
+      authSignInEvent.email,
+      authSignInEvent.password,
+    ));
+
+    result.fold(
+      (left) => emit(AuthFailedState(left.message)),
+      (user) => emit(AuthSuccessState(user)),
+    );
   }
 }
