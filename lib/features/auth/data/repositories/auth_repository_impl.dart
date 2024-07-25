@@ -1,9 +1,10 @@
 import 'package:blog_app/core/error/exceptions.dart';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/auth/data/datasources/auth_supabase_data_source.dart';
-import 'package:blog_app/features/auth/data/models/user_model.dart';
+import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 
 // Implementation for AuthRepository from Domain Layer
 class AuthRepositoryImpl implements AuthRepository {
@@ -12,39 +13,46 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authSupabaseDataSource);
 
   @override
-  Future<Either<Failure, UserModel>> signInWithEmailPassword({
+  Future<Either<Failure, User>> signInWithEmailPassword({
     required String email,
     required String password,
   }) async {
-    try {
-      final user = await _authSupabaseDataSource.signInWithEmailPassword(
+    return _getUserAsync(
+      () async => await _authSupabaseDataSource.signInWithEmailPassword(
         email: email,
         password: password,
-      );
-
-      return right(user);
-    } on ServerException catch (e) {
-      return left(Failure(e.message));
-    }
+      ),
+    );
   }
 
   @override
-  Future<Either<Failure, UserModel>> signUpWithEmailPassword({
+  Future<Either<Failure, User>> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
   }) async {
-    try {
-      final user = await _authSupabaseDataSource.signUpWithEmailPassword(
+    return _getUserAsync(
+      () async => await _authSupabaseDataSource.signUpWithEmailPassword(
         name: name,
         email: email,
         password: password,
-      );
+      ),
+    );
+  }
+
+  // Create a wrapper function, since the implementation are the same
+  Future<Either<Failure, User>> _getUserAsync(
+    Future<User> Function() function,
+  ) async {
+    try {
+      final user = await function();
 
       // Right: return type would be a String
       return right(user);
-    } on ServerException catch (e) {
+    } on supabase.AuthException catch (e) {
       // Left: return type would be a Failure class
+      return left(Failure(e.message));
+    } on ServerException catch (e) {
       return left(Failure(e.message));
     }
   }
