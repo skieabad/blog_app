@@ -1,6 +1,7 @@
 import 'package:blog_app/features/auth/data/datasources/auth_supabase_data_source.dart';
 import 'package:blog_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
+import 'package:blog_app/features/auth/domain/use_cases/current_user_case.dart';
 import 'package:blog_app/features/auth/domain/use_cases/user_sign_in_case.dart';
 import 'package:blog_app/features/auth/domain/use_cases/user_sign_up_case.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -48,6 +49,9 @@ void _initAuth() {
     ..registerFactory(
       () => UserSignInCase(serviceLocator()),
     )
+    ..registerFactory(
+      () => CurrentUserCase(serviceLocator()),
+    )
 
     // Bloc
     // We use registerLazySingleton here since we only need one instance of the AuthBloc
@@ -57,6 +61,7 @@ void _initAuth() {
       () => AuthBloc(
         userSignUpCase: serviceLocator(),
         userSignInCase: serviceLocator(),
+        currentUserCase: serviceLocator(),
       ),
     );
 }
