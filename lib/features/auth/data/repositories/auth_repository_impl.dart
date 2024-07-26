@@ -1,7 +1,7 @@
 import 'package:blog_app/core/error/exceptions.dart';
 import 'package:blog_app/core/error/failure.dart';
 import 'package:blog_app/features/auth/data/datasources/auth_supabase_data_source.dart';
-import 'package:blog_app/features/auth/domain/entities/user.dart';
+import 'package:blog_app/core/entities/user.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
@@ -11,6 +11,21 @@ class AuthRepositoryImpl implements AuthRepository {
   // Call the abstract interface we create from Data Layer and inject it
   final AuthSupabaseDataSource _authSupabaseDataSource;
   AuthRepositoryImpl(this._authSupabaseDataSource);
+
+  @override
+  Future<Either<Failure, User>> getCurrentUser() async {
+    try {
+      final user = await _authSupabaseDataSource.getCurrentUser();
+
+      if (user == null) {
+        return left(Failure('User is not logged in'));
+      }
+
+      return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 
   @override
   Future<Either<Failure, User>> signInWithEmailPassword({
