@@ -3,16 +3,17 @@ import 'package:blog_app/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class AuthSupabaseDataSource {
+  Session? get getCurrentUserSession;
   Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
   });
-
   Future<UserModel> signInWithEmailPassword({
     required String email,
     required String password,
   });
+  Future<UserModel?> getCurrentUser();
 }
 
 class AuthSupabaseDataSourceImpl implements AuthSupabaseDataSource {
@@ -21,6 +22,28 @@ class AuthSupabaseDataSourceImpl implements AuthSupabaseDataSource {
   // And also, we can easily test the class by mocking the SupabaseClient
   final SupabaseClient _supabaseClient;
   const AuthSupabaseDataSourceImpl(this._supabaseClient);
+
+  @override
+  Session? get getCurrentUserSession => _supabaseClient.auth.currentSession;
+
+  @override
+  Future<UserModel?> getCurrentUser() async {
+    // Query the table from supabase
+    try {
+      if (getCurrentUserSession != null) {
+        final user = await _supabaseClient
+            .from('profiles')
+            .select()
+            .eq('id', getCurrentUserSession?.user.id ?? "");
+
+        return UserModel.fromJson(user.first);
+      }
+
+      return null;
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
 
   @override
   Future<UserModel> signInWithEmailPassword({
