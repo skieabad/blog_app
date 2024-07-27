@@ -1,3 +1,4 @@
+import 'package:blog_app/core/cubits/app_user/app_user_cubit.dart';
 import 'package:blog_app/features/auth/data/datasources/auth_supabase_data_source.dart';
 import 'package:blog_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
@@ -27,6 +28,9 @@ Future<void> initDependencies() async {
 
   // Register the supabase
   serviceLocator.registerLazySingleton<SupabaseClient>(() => supabase.client);
+
+  // Register the cubit as core
+  serviceLocator.registerLazySingleton<AppUserCubit>(() => AppUserCubit());
 }
 
 // Register the classes that have constructor with required an instance
@@ -62,6 +66,7 @@ void _initAuth() {
         userSignUpCase: serviceLocator(),
         userSignInCase: serviceLocator(),
         currentUserCase: serviceLocator(),
+        appUserCubit: serviceLocator(),
       ),
     );
 }
