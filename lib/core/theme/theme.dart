@@ -12,7 +12,15 @@ class AppTheme {
     // scaffold background color will apply to all pages
     scaffoldBackgroundColor: AppPallete.backgroundColor,
     // appbar background color will apply to all pages
-    appBarTheme: const AppBarTheme(backgroundColor: AppPallete.backgroundColor),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppPallete.backgroundColor,
+      surfaceTintColor: AppPallete.transparentColor,
+    ),
+    // chip color will apply to all pages
+    chipTheme: const ChipThemeData(
+      color: MaterialStatePropertyAll(AppPallete.backgroundColor),
+      side: BorderSide.none,
+    ),
     // input decoration for textformfield will apply to all pages
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(18.0),
